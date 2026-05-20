@@ -87,7 +87,7 @@
 <body>
 <div class="app">
   <header>
-    <h1>My Sports Calendar <span>— personal schedule</span></h1>
+    <h1>My Sports Calendar <span>— personal schedule?limit=100</span></h1>
     <div class="status"><span class="live-dot"></span>live data</div>
   </header>
   <div class="filters" id="filters"></div>
@@ -101,7 +101,7 @@
   <div class="section-title">upcoming events</div>
   <div id="event-list" class="event-list"><div class="loading">fetching schedules...</div></div>
   <div class="nastic-section">
-    <h3>NÀSTIC DE TARRAGONA — manual schedule</h3>
+    <h3>NÀSTIC DE TARRAGONA — manual schedule?limit=100</h3>
     <div class="nastic-form">
       <input type="text" id="n-opp" placeholder="Opponent" />
       <input type="date" id="n-date" />
@@ -141,7 +141,7 @@ currentDate.setDate(1);
 
 async function fetchESPN(sport, league, teamId, teamName, sportKey) {
   try {
-    const url = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${teamId}/schedule`;
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${teamId}//schedule?limit=100`;
     const r = await fetch(url);
     const d = await r.json();
     const events = [];
@@ -171,7 +171,7 @@ async function fetchESPN(sport, league, teamId, teamName, sportKey) {
 
 async function fetchBarcelona() {
   try {
-    const url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/teams/83/schedule';
+    const url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/teams/83//schedule?limit=100';
     const r = await fetch(url);
     const d = await r.json();
     const events = [];
