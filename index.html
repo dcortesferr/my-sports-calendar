@@ -1,172 +1,391 @@
-My Sports Calendar
-— personal schedule
-live data
-ALL
-NCAAB
-NCAAF
-Soccer
-NFL
-MLB
-NHL
-MLS
-Cycling
-Nàstic
-←
-maig del 2026
-→
-today
-SUN
-MON
-TUE
-WED
-THU
-FRI
-SAT
-26
-27
-28
-29
-30
-1
-2
-Dodgers @ Cardinals
-Dodgers @ Cardinals
-+2 more
-3
-Dodgers @ Cardinals
-4
-Brewers @ Cardinals
-5
-Brewers @ Cardinals
-6
-Brewers @ Cardinals
-7
-8
-Cardinals @ Padres
-9
-Cardinals @ Padres
-Cardinals @ Padres
-+1 more
-10
-Cardinals @ Padres
-Austin @ Minnesota
-+1 more
-11
-12
-13
-Cardinals @ Athletics
-Barcelona vs Alavés
-14
-Cardinals @ Athletics
-Cardinals @ Athletics
-+1 more
-15
-16
-Royals @ Cardinals
-Royals @ Cardinals
-+1 more
-17
-Royals @ Cardinals
-Betis vs Barcelona
-18
-19
-Pirates @ Cardinals
-20
-Pirates @ Cardinals
-21
-Pirates @ Cardinals
-22
-Cardinals @ Reds
-23
-Cardinals @ Reds
-24
-Cardinals @ Reds
-25
-Cardinals @ Brewers
-26
-Cardinals @ Brewers
-27
-Cardinals @ Brewers
-28
-29
-30
-Cubs @ Cardinals
-Cubs @ Cardinals
-31
-Cubs @ Cardinals
-1
-2
-3
-4
-5
-6
-upcoming events
-MAIG
-20
-Pirates @ Cardinals
-6:45 PM · Busch Stadium
-MLB
-MAIG
-21
-Pirates @ Cardinals
-12:15 PM · Busch Stadium
-MLB
-MAIG
-22
-Cardinals @ Reds
-5:40 PM · Great American Ball Park
-MLB
-MAIG
-23
-Cardinals @ Reds
-6:15 PM · Great American Ball Park
-MLB
-MAIG
-24
-Cardinals @ Reds
-12:40 PM · Great American Ball Park
-MLB
-MAIG
-25
-Cardinals @ Brewers
-1:10 PM · American Family Field
-MLB
-MAIG
-26
-Cardinals @ Brewers
-6:40 PM · American Family Field
-MLB
-MAIG
-27
-Cardinals @ Brewers
-12:40 PM · American Family Field
-MLB
-MAIG
-30
-Cubs @ Cardinals
-7:15 PM · Busch Stadium
-MLB
-MAIG
-30
-Cubs @ Cardinals
-6:15 PM · Busch Stadium
-MLB
-MAIG
-31
-Cubs @ Cardinals
-6:20 PM · Busch Stadium
-MLB
-JUNY
-1
-Rangers @ Cardinals
-6:45 PM · Busch Stadium
-MLB
-NÀSTIC DE TARRAGONA — manual schedule
-Opponent
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Sports Calendar</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --bg2: #1a1a1a;
+    --bg3: #222;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #f0f0f0;
+    --text2: #999;
+    --text3: #555;
+    --accent: #e8e8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; min-height: 100vh; }
+  .app { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  header { border-bottom: 0.5px solid var(--border2); padding-bottom: 1.5rem; margin-bottom: 2rem; display: flex; align-items: flex-end; justify-content: space-between; }
+  header h1 { font-size: 28px; font-weight: normal; letter-spacing: -0.5px; color: var(--text); }
+  header h1 span { color: var(--text2); font-size: 16px; display: block; margin-top: 2px; font-family: 'Courier New', monospace; letter-spacing: 0.05em; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .status { font-size: 12px; color: var(--text2); font-family: 'Courier New', monospace; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .pill { border: 0.5px solid var(--border2); border-radius: 2px; padding: 4px 10px; font-size: 11px; cursor: pointer; color: var(--text2); background: transparent; font-family: 'Courier New', monospace; letter-spacing: 0.05em; transition: all 0.15s; }
+  .pill:hover { border-color: var(--border2); color: var(--text); }
+  .pill.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: middle; }
+  .nav { display: flex; align-items: center; gap: 12px; margin-bottom: 1.2rem; }
+  .nav-month { font-size: 18px; font-weight: normal; color: var(--text); min-width: 180px; letter-spacing: -0.3px; }
+  .nav-btn { background: transparent; border: 0.5px solid var(--border2); color: var(--text2); padding: 5px 10px; cursor: pointer; font-size: 14px; border-radius: 2px; }
+  .nav-btn:hover { color: var(--text); border-color: var(--text2); }
+  .today-btn { margin-left: auto; font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.05em; }
+  .calendar { display: grid; grid-template-columns: repeat(7, 1fr); border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 2rem; }
+  .dh { background: var(--bg2); padding: 8px 6px; text-align: center; font-size: 10px; color: var(--text3); font-family: 'Courier New', monospace; letter-spacing: 0.1em; border-bottom: 0.5px solid var(--border); }
+  .dc { background: var(--bg); min-height: 88px; padding: 6px; border-right: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); position: relative; }
+  .dc:nth-child(7n) { border-right: none; }
+  .dc.om { background: var(--bg2); }
+  .dc.today { background: #1a1a1a; }
+  .dc.today .dn { background: var(--text); color: var(--bg); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+  .dn { font-size: 11px; color: var(--text3); margin-bottom: 4px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace; }
+  .dc.om .dn { color: var(--text3); opacity: 0.4; }
+  .ev { font-size: 9.5px; padding: 2px 5px; border-radius: 1px; margin-bottom: 2px; cursor: pointer; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: 'Courier New', monospace; transition: opacity 0.1s; }
+  .ev:hover { opacity: 0.75; }
+  .more { font-size: 9px; color: var(--text3); padding: 1px 4px; font-family: 'Courier New', monospace; cursor: pointer; }
+  .more:hover { color: var(--text2); }
+  .section-title { font-size: 11px; color: var(--text3); font-family: 'Courier New', monospace; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+  .event-list { display: flex; flex-direction: column; gap: 1px; }
+  .ec { display: flex; align-items: stretch; border: 0.5px solid var(--border); border-radius: 3px; overflow: hidden; cursor: pointer; transition: border-color 0.15s; background: var(--bg2); }
+  .ec:hover { border-color: var(--border2); }
+  .ec-stripe { width: 3px; flex-shrink: 0; }
+  .ec-date { padding: 12px 14px; text-align: center; min-width: 58px; border-right: 0.5px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ec-date .mo { font-size: 10px; color: var(--text3); font-family: 'Courier New', monospace; letter-spacing: 0.1em; }
+  .ec-date .dy { font-size: 22px; color: var(--text); font-weight: normal; line-height: 1; }
+  .ec-body { flex: 1; padding: 12px 14px; }
+  .ec-title { font-size: 14px; color: var(--text); }
+  .ec-meta { font-size: 11px; color: var(--text2); margin-top: 3px; font-family: 'Courier New', monospace; }
+  .ec-tag { padding: 12px 14px; display: flex; align-items: center; }
+  .tag { font-size: 10px; padding: 3px 8px; border-radius: 1px; font-family: 'Courier New', monospace; letter-spacing: 0.05em; }
+  .loading { text-align: center; padding: 3rem; color: var(--text3); font-family: 'Courier New', monospace; font-size: 13px; }
+  .modal-wrap { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
+  .modal-wrap.open { display: flex; }
+  .modal { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: 4px; padding: 1.5rem; max-width: 380px; width: 90%; }
+  .modal-close { float: right; cursor: pointer; color: var(--text3); font-size: 20px; line-height: 1; background: none; border: none; }
+  .modal-close:hover { color: var(--text2); }
+  .modal h3 { font-size: 16px; font-weight: normal; color: var(--text); margin-bottom: 8px; padding-right: 20px; }
+  .modal p { font-size: 12px; color: var(--text2); font-family: 'Courier New', monospace; margin-top: 6px; }
+  .modal .badge { display: inline-block; margin-top: 10px; font-size: 10px; padding: 3px 8px; border-radius: 1px; font-family: 'Courier New', monospace; }
+  .nastic-section { margin-top: 2rem; border: 0.5px solid var(--border); border-radius: 4px; padding: 1.2rem; background: var(--bg2); }
+  .nastic-section h3 { font-size: 12px; color: var(--text2); font-family: 'Courier New', monospace; letter-spacing: 0.08em; margin-bottom: 0.8rem; }
+  .nastic-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+  .nastic-form input { background: var(--bg); border: 0.5px solid var(--border2); color: var(--text); padding: 6px 10px; font-size: 12px; font-family: 'Courier New', monospace; border-radius: 2px; flex: 1; min-width: 120px; }
+  .nastic-form input:focus { outline: none; border-color: var(--text3); }
+  .nastic-form button { background: var(--text); color: var(--bg); border: none; padding: 6px 14px; font-size: 11px; font-family: 'Courier New', monospace; border-radius: 2px; cursor: pointer; white-space: nowrap; }
+  .nastic-form button:hover { opacity: 0.85; }
+  .nastic-games { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 4px; }
+  .nastic-game { display: flex; align-items: center; gap: 10px; font-size: 11px; font-family: 'Courier New', monospace; color: var(--text2); }
+  .nastic-game .del { cursor: pointer; color: var(--text3); background: none; border: none; font-size: 14px; line-height: 1; padding: 0 2px; }
+  .nastic-game .del:hover { color: #f87171; }
+  @media (max-width: 600px) { .app { padding: 1rem; } .dc { min-height: 60px; } .ev { font-size: 8.5px; } header { flex-direction: column; align-items: flex-start; gap: 8px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>My Sports Calendar <span>— personal schedule</span></h1>
+    <div class="status"><span class="live-dot"></span>live data</div>
+  </header>
+  <div class="filters" id="filters"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="changeMonth(-1)">&#8592;</button>
+    <span class="nav-month" id="nav-month"></span>
+    <button class="nav-btn" onclick="changeMonth(1)">&#8594;</button>
+    <button class="nav-btn today-btn" onclick="goToday()">today</button>
+  </div>
+  <div class="calendar" id="calendar"></div>
+  <div class="section-title">upcoming events</div>
+  <div id="event-list" class="event-list"><div class="loading">fetching schedules...</div></div>
+  <div class="nastic-section">
+    <h3>NÀSTIC DE TARRAGONA — manual schedule</h3>
+    <div class="nastic-form">
+      <input type="text" id="n-opp" placeholder="Opponent" />
+      <input type="date" id="n-date" />
+      <input type="time" id="n-time" placeholder="Time" />
+      <input type="text" id="n-venue" placeholder="Home / Away" />
+      <button onclick="addNastic()">+ Add game</button>
+    </div>
+    <div class="nastic-games" id="nastic-games"></div>
+  </div>
+</div>
+<div class="modal-wrap" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">×</button>
+    <h3 id="m-title"></h3>
+    <p id="m-date"></p>
+    <p id="m-venue"></p>
+    <span class="badge" id="m-badge"></span>
+  </div>
+</div><script>
+const SPORTS = {
+  ncaab:   { label:'NCAAB',    color:'#1D9E75', bg:'#0d3326', text:'#5DCAA5' },
+  ncaaf:   { label:'NCAAF',    color:'#D85A30', bg:'#3a1a0c', text:'#F0997B' },
+  soccer:  { label:'Soccer',   color:'#378ADD', bg:'#0d2440', text:'#85B7EB' },
+  nfl:     { label:'NFL',      color:'#D4537E', bg:'#38102a', text:'#ED93B1' },
+  mlb:     { label:'MLB',      color:'#EF9F27', bg:'#332208', text:'#FAC775' },
+  nhl:     { label:'NHL',      color:'#7F77DD', bg:'#1a1840', text:'#AFA9EC' },
+  mls:     { label:'MLS',      color:'#639922', bg:'#1a2a08', text:'#97C459' },
+  cycling: { label:'Cycling',  color:'#888780', bg:'#1e1e1c', text:'#B4B2A9' },
+  nastic:  { label:'Nàstic',   color:'#E24B4A', bg:'#2a0d0d', text:'#F09595' },
+};
 
-dd/mm/aaaa
+let allEvents = [];
+let nasticEvents = JSON.parse(localStorage.getItem('nasticEvents') || '[]');
+let activeFilters = new Set(Object.keys(SPORTS));
+let currentDate = new Date();
+currentDate.setDate(1);
 
---:--
-Home / Away
-+ Add game
-No games added yet
+async function fetchESPN(sport, league, teamId, teamName, sportKey) {
+  try {
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${teamId}/schedule`;
+    const r = await fetch(url);
+    const d = await r.json();
+    const events = [];
+    (d.events || []).forEach(ev => {
+      const comp = ev.competitions?.[0];
+      if (!comp) return;
+      const home = comp.competitors?.find(c => c.homeAway === 'home');
+      const away = comp.competitors?.find(c => c.homeAway === 'away');
+      if (!home || !away) return;
+      const dt = new Date(ev.date);
+      events.push({
+        id: ev.id,
+        sport: sportKey,
+        title: `${away.team.shortDisplayName} @ ${home.team.shortDisplayName}`,
+        date: dt.toISOString().split('T')[0],
+        time: dt.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZone:'America/Chicago'}),
+        venue: comp.venue?.fullName || 'TBD',
+        fullDate: dt,
+      });
+    });
+    return events;
+  } catch(e) {
+    console.warn('ESPN fetch failed', teamName, e);
+    return [];
+  }
+}
+
+async function fetchBarcelona() {
+  try {
+    const url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/teams/83/schedule';
+    const r = await fetch(url);
+    const d = await r.json();
+    const events = [];
+    (d.events || []).forEach(ev => {
+      const comp = ev.competitions?.[0];
+      if (!comp) return;
+      const home = comp.competitors?.find(c => c.homeAway === 'home');
+      const away = comp.competitors?.find(c => c.homeAway === 'away');
+      if (!home || !away) return;
+      const dt = new Date(ev.date);
+      events.push({
+        id: ev.id,
+        sport: 'soccer',
+        title: `${away.team.shortDisplayName} vs ${home.team.shortDisplayName}`,
+        date: dt.toISOString().split('T')[0],
+        time: dt.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZone:'Europe/Madrid'}),
+        venue: comp.venue?.fullName || 'TBD',
+        fullDate: dt,
+      });
+    });
+    return events;
+  } catch(e) {
+    console.warn('Barcelona fetch failed', e);
+    return [];
+  }
+}
+
+function getCyclingEvents() {
+  const year = new Date().getFullYear();
+  return [
+    { id:'giro-start', sport:'cycling', title:"Giro d'Italia — Stage 1", date:`${year}-05-09`, time:'All day', venue:'Italy' },
+    { id:'giro-end',   sport:'cycling', title:"Giro d'Italia — Final Stage", date:`${year}-06-01`, time:'All day', venue:'Rome, Italy' },
+    { id:'tdf-start',  sport:'cycling', title:'Tour de France — Stage 1', date:`${year}-06-28`, time:'All day', venue:'France' },
+    { id:'tdf-end',    sport:'cycling', title:'Tour de France — Final Stage', date:`${year}-07-20`, time:'All day', venue:'Paris, France' },
+    { id:'vuelta-start',sport:'cycling',title:'La Vuelta — Stage 1', date:`${year}-08-16`, time:'All day', venue:'Spain' },
+    { id:'vuelta-end', sport:'cycling', title:'La Vuelta — Final Stage', date:`${year}-09-07`, time:'All day', venue:'Madrid, Spain' },
+    { id:'sanremo',    sport:'cycling', title:'Milan–San Remo', date:`${year}-03-22`, time:'All day', venue:'Italy' },
+    { id:'flanders',   sport:'cycling', title:'Tour of Flanders', date:`${year}-04-06`, time:'All day', venue:'Belgium' },
+    { id:'roubaix',    sport:'cycling', title:'Paris–Roubaix', date:`${year}-04-13`, time:'All day', venue:'France' },
+    { id:'liege',      sport:'cycling', title:'Liège–Bastogne–Liège', date:`${year}-04-27`, time:'All day', venue:'Belgium' },
+    { id:'lombardia',  sport:'cycling', title:'Il Lombardia', date:`${year}-10-11`, time:'All day', venue:'Italy' },
+  ];
+}
+
+function nasticToEvents() {
+  return nasticEvents.map((g, i) => ({
+    id: 'nastic-' + i,
+    sport: 'nastic',
+    title: `Nàstic vs ${g.opp}`,
+    date: g.date,
+    time: g.time || 'TBD',
+    venue: g.venue || 'TBD',
+    fullDate: new Date(g.date + 'T12:00:00'),
+  }));
+}
+
+async function loadAllEvents() {
+  document.getElementById('event-list').innerHTML = '<div class="loading">fetching schedules...</div>';
+  const results = await Promise.all([
+    fetchESPN('basketball', 'mens-college-basketball', '96', 'Kentucky', 'ncaab'),
+    fetchESPN('basketball', 'mens-college-basketball', '139', 'Saint Louis', 'ncaab'),
+    fetchESPN('football', 'college-football', '96', 'Kentucky', 'ncaaf'),
+    fetchESPN('football', 'nfl', '25', 'San Francisco 49ers', 'nfl'),
+    fetchESPN('baseball', 'mlb', '24', 'St. Louis Cardinals', 'mlb'),
+    fetchESPN('hockey', 'nhl', '19', 'St. Louis Blues', 'nhl'),
+    fetchESPN('soccer', 'usa.1', '17362', 'St. Louis City', 'mls'),
+    fetchBarcelona(),
+  ]);
+  allEvents = [...results.flat(), ...getCyclingEvents(), ...nasticToEvents()];
+  render();
+}
+
+function getVisible() {
+  return allEvents.filter(e => activeFilters.has(e.sport));
+}
+
+function getEventsForDate(dateStr) {
+  return getVisible().filter(e => e.date === dateStr);
+}
+
+function renderFilters() {
+  const el = document.getElementById('filters');
+  el.innerHTML = '';
+  const all = document.createElement('div');
+  all.className = 'pill' + (activeFilters.size === Object.keys(SPORTS).length ? ' active' : '');
+  all.textContent = 'ALL';
+  all.onclick = () => { activeFilters = new Set(Object.keys(SPORTS)); render(); };
+  el.appendChild(all);
+  Object.entries(SPORTS).forEach(([id, s]) => {
+    const p = document.createElement('div');
+    p.className = 'pill' + (activeFilters.has(id) ? ' active' : '');
+    p.innerHTML = `<span class="pill-dot" style="background:${s.color}"></span>${s.label}`;
+    p.onclick = () => { if (activeFilters.has(id)) activeFilters.delete(id); else activeFilters.add(id); render(); };
+    el.appendChild(p);
+  });
+}
+
+function renderCalendar() {
+  const el = document.getElementById('calendar');
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  document.getElementById('nav-month').textContent = currentDate.toLocaleString('default', {month:'long', year:'numeric'});
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  el.innerHTML = days.map(d => `<div class="dh">${d}</div>`).join('');
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const prevDays = new Date(year, month, 0).getDate();
+  for (let i = 0; i < firstDay; i++) {
+    const d = prevDays - firstDay + 1 + i;
+    el.innerHTML += `<div class="dc om"><div class="dn">${d}</div></div>`;
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === todayStr;
+    const evs = getEventsForDate(dateStr);
+    const max = 2;
+    let evHtml = evs.slice(0, max).map(e => {
+      const s = SPORTS[e.sport];
+      return `<div class="ev" style="background:${s.bg};color:${s.text}" onclick="showModal('${e.id}')">${e.title}</div>`;
+    }).join('');
+    if (evs.length > max) evHtml += `<div class="more">+${evs.length - max} more</div>`;
+    el.innerHTML += `<div class="dc${isToday ? ' today' : ''}"><div class="dn">${d}</div>${evHtml}</div>`;
+  }
+  const remaining = 42 - firstDay - daysInMonth;
+  for (let d = 1; d <= remaining; d++) {
+    el.innerHTML += `<div class="dc om"><div class="dn">${d}</div></div>`;
+  }
+}
+
+function renderUpcoming() {
+  const el = document.getElementById('event-list');
+  const todayStr = new Date().toISOString().split('T')[0];
+  const upcoming = getVisible()
+    .filter(e => e.date >= todayStr)
+    .sort((a,b) => a.date.localeCompare(b.date))
+    .slice(0, 12);
+  if (!upcoming.length) { el.innerHTML = '<div class="loading">no upcoming events for selected sports</div>'; return; }
+  el.innerHTML = upcoming.map(e => {
+    const s = SPORTS[e.sport];
+    const d = new Date(e.date + 'T12:00:00');
+    const mo = d.toLocaleString('default', {month:'short'}).toUpperCase();
+    const dy = d.getDate();
+    return `
+      <div class="ec" onclick="showModal('${e.id}')">
+        <div class="ec-stripe" style="background:${s.color}"></div>
+        <div class="ec-date"><div class="mo">${mo}</div><div class="dy">${dy}</div></div>
+        <div class="ec-body">
+          <div class="ec-title">${e.title}</div>
+          <div class="ec-meta">${e.time} · ${e.venue}</div>
+        </div>
+        <div class="ec-tag"><span class="tag" style="background:${s.bg};color:${s.text}">${s.label}</span></div>
+      </div>`;
+  }).join('');
+}
+
+function showModal(id) {
+  const e = allEvents.find(ev => String(ev.id) === String(id));
+  if (!e) return;
+  const s = SPORTS[e.sport];
+  const d = new Date(e.date + 'T12:00:00');
+  document.getElementById('m-title').textContent = e.title;
+  document.getElementById('m-date').textContent = d.toLocaleDateString('default', {weekday:'long', month:'long', day:'numeric', year:'numeric'}) + ' · ' + e.time;
+  document.getElementById('m-venue').textContent = e.venue;
+  const badge = document.getElementById('m-badge');
+  badge.textContent = s.label;
+  badge.style.background = s.bg;
+  badge.style.color = s.text;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) { if (e.target.id === 'modal') document.getElementById('modal').classList.remove('open'); }
+function changeMonth(dir) { currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + dir, 1); render(); }
+function goToday() { currentDate = new Date(); currentDate.setDate(1); render(); }
+
+function renderNastic() {
+  const el = document.getElementById('nastic-games');
+  if (!nasticEvents.length) { el.innerHTML = '<div style="font-size:11px;color:var(--text3);font-family:Courier New,monospace;margin-top:4px">No games added yet</div>'; return; }
+  el.innerHTML = nasticEvents.map((g, i) => `
+    <div class="nastic-game">
+      <button class="del" onclick="deleteNastic(${i})">×</button>
+      <span>${g.date} · vs ${g.opp} · ${g.time || 'TBD'} · ${g.venue || 'TBD'}</span>
+    </div>`).join('');
+}
+
+function addNastic() {
+  const opp = document.getElementById('n-opp').value.trim();
+  const date = document.getElementById('n-date').value;
+  const time = document.getElementById('n-time').value;
+  const venue = document.getElementById('n-venue').value.trim();
+  if (!opp || !date) { alert('Please enter at least an opponent and date.'); return; }
+  nasticEvents.push({ opp, date, time, venue });
+  localStorage.setItem('nasticEvents', JSON.stringify(nasticEvents));
+  document.getElementById('n-opp').value = '';
+  document.getElementById('n-date').value = '';
+  document.getElementById('n-time').value = '';
+  document.getElementById('n-venue').value = '';
+  allEvents = allEvents.filter(e => e.sport !== 'nastic');
+  allEvents.push(...nasticToEvents());
+  render();
+}
+
+function deleteNastic(i) {
+  nasticEvents.splice(i, 1);
+  localStorage.setItem('nasticEvents', JSON.stringify(nasticEvents));
+  allEvents = allEvents.filter(e => e.sport !== 'nastic');
+  allEvents.push(...nasticToEvents());
+  render();
+}
+
+function render() { renderFilters(); renderCalendar(); renderUpcoming(); renderNastic(); }
+
+loadAllEvents();
+</script>
+</body>
+</html>
