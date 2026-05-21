@@ -16,7 +16,7 @@ header h1 span{color:var(--text2);font-size:15px;display:block;margin-top:2px;fo
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .status{font-size:12px;color:var(--text2);font-family:'Courier New',monospace}
 .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
-.pill{border:0.5px solid var(--border2);border-radius:2px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--text2);background:transparent;font-family:'Courier New',monospace;letter-spacing:0.05em;transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.pill{border:0.5px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--text2);background:transparent;font-family:'Courier New',monospace;letter-spacing:0.05em;transition:all 0.15s;display:flex;align-items:center;gap:5px}
 .pill:hover{color:var(--text)}
 .pill.active{background:var(--text);color:var(--bg);border-color:var(--text)}
 .pill-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -48,16 +48,15 @@ header h1 span{color:var(--text2);font-size:15px;display:block;margin-top:2px;fo
 .ec-title{font-size:14px;color:var(--text)}
 .ec-meta{font-size:11px;color:var(--text2);margin-top:3px;font-family:'Courier New',monospace}
 .ec-tag{padding:12px 14px;display:flex;align-items:center}
-.tag{font-size:10px;padding:3px 8px;border-radius:1px;font-family:'Courier New',monospace;letter-spacing:0.05em}
+.tag{font-size:10px;padding:3px 8px;border-radius:10px;font-family:'Courier New',monospace}
 .loading{text-align:center;padding:2rem;color:var(--text3);font-family:'Courier New',monospace;font-size:13px}
-.error-note{font-size:11px;color:var(--text3);font-family:'Courier New',monospace;text-align:center;margin-top:1rem}
 .modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center}
 .modal-wrap.open{display:flex}
 .modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:4px;padding:1.5rem;max-width:380px;width:90%}
 .modal-close{float:right;cursor:pointer;color:var(--text3);font-size:20px;line-height:1;background:none;border:none}
 .modal h3{font-size:16px;font-weight:normal;color:var(--text);margin-bottom:8px;padding-right:20px}
 .modal p{font-size:12px;color:var(--text2);font-family:'Courier New',monospace;margin-top:6px}
-.modal .badge{display:inline-block;margin-top:10px;font-size:10px;padding:3px 8px;border-radius:1px;font-family:'Courier New',monospace}
+.modal .badge{display:inline-block;margin-top:10px;font-size:10px;padding:3px 8px;border-radius:10px;font-family:'Courier New',monospace}
 @media(max-width:600px){.app{padding:1rem}.dc{min-height:60px}.ev{font-size:8px}header{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
@@ -86,115 +85,88 @@ header h1 span{color:var(--text2);font-size:15px;display:block;margin-top:2px;fo
     <p id="m-venue"></p>
     <span class="badge" id="m-badge"></span>
   </div>
-</div>
-<script>
+</div><script>
 const SPORTS={
-  nfl:     {label:'49ers',    color:'#AA0000',bg:'#2a0a0a',text:'#E87070'},
-  mlb:     {label:'Cardinals',color:'#C41E3A',bg:'#2a0812',text:'#E87090'},
-  ncaab:   {label:'NCAAB',   color:'#1D9E75',bg:'#0d3326',text:'#5DCAA5'},
-  ncaaf:   {label:'UK Football',color:'#0033A0',bg:'#0a1a3a',text:'#6699DD'},
-  soccer:  {label:'Barca',   color:'#A50044',bg:'#2a0a1a',text:'#DD6699'},
-  mls:     {label:'STL City',color:'#003DA5',bg:'#0a1a2a',text:'#6699DD'},
-  nastic:  {label:'Nastic',  color:'#E24B4A',bg:'#2a0d0d',text:'#F09595'},
-  cycling: {label:'Cycling', color:'#F5A623',bg:'#2a1e05',text:'#F5C97A'},
+  nfl:    {label:'49ers',      color:'#AA0000',bg:'#2a0a0a',text:'#E87070'},
+  mlb:    {label:'Cardinals',  color:'#C41E3A',bg:'#2a0812',text:'#E87090'},
+  ncaab:  {label:'NCAAB',     color:'#1D9E75',bg:'#0d3326',text:'#5DCAA5'},
+  ncaaf:  {label:'UK Football',color:'#0033A0',bg:'#0a1a3a',text:'#6699DD'},
+  soccer: {label:'Barca',     color:'#A50044',bg:'#2a0a1a',text:'#DD6699'},
+  mls:    {label:'STL City',  color:'#003DA5',bg:'#0a1a2a',text:'#6699DD'},
+  nastic: {label:'Nastic',    color:'#E24B4A',bg:'#2a0d0d',text:'#F09595'},
+  cycling:{label:'Cycling',   color:'#BA7517',bg:'#2a1e05',text:'#F5C97A'},
 };
 
+const PROXY='https://api.allorigins.win/raw?url=';
 const FEEDS=[
-  {url:'https://www.49ers.com/api/addToCalendar/ag/s?text=',                                                                                          sport:'nfl'},
-  {url:'https://ics.ecal.com/ecal-sub/6a0e8b9fecf25200022927d1/MLB%20.ics',                                                                           sport:'mlb'},
-  {url:'https://api.calendar.wmt.digital/api/calendar/calendar.ics?username=ukathletics&category%5B%5D=247',                                          sport:'ncaab'},
-  {url:'https://api.calendar.wmt.digital/api/calendar/calendar.ics?username=ukathletics&category%5B%5D=241',                                          sport:'ncaaf'},
-  {url:'https://slubillikens.com/calendar.ashx/calendar.ics?sport_id=5&_=cmjuq62kw00013t9dcwnqdim3',                                                  sport:'ncaab'},
-  {url:'https://ics.ecal.com/ecal-sub/6a0e8da349cf450002debd05/FC%20Barcelona.ics',                                                                   sport:'soccer'},
-  {url:'https://calendar.google.com/calendar/ical/d9c0eaefc381af39120859813a5bbf438cd051dc133acd96b654c7fe5edfc9ed%40group.calendar.google.com/public/basic.ics', sport:'mls'},
-  {url:'https://calendar.google.com/calendar/ical/u21tgtud6mn6sephsftl89883c%40group.calendar.google.com/public/basic.ics',                           sport:'nastic'},
-  {url:'https://ics.sync2cal.com/categories/get_ics/17bf3b87-5f4e-42a3-b765-b617de9e416a.ics',                                                        sport:'cycling'},
+  {url:'https://www.49ers.com/api/addToCalendar/ag/s?text=',sport:'nfl'},
+  {url:'https://ics.ecal.com/ecal-sub/6a0e8b9fecf25200022927d1/MLB%20.ics',sport:'mlb',filter:'Cardinals'},
+  {url:'https://api.calendar.wmt.digital/api/calendar/calendar.ics?username=ukathletics&category%5B%5D=247',sport:'ncaab'},
+  {url:'https://api.calendar.wmt.digital/api/calendar/calendar.ics?username=ukathletics&category%5B%5D=241',sport:'ncaaf'},
+  {url:'https://slubillikens.com/calendar.ashx/calendar.ics?sport_id=5&_=cmjuq62kw00013t9dcwnqdim3',sport:'ncaab'},
+  {url:'https://ics.ecal.com/ecal-sub/6a0e8da349cf450002debd05/FC%20Barcelona.ics',sport:'soccer'},
+  {url:'https://calendar.google.com/calendar/ical/d9c0eaefc381af39120859813a5bbf438cd051dc133acd96b654c7fe5edfc9ed%40group.calendar.google.com/public/basic.ics',sport:'mls'},
+  {url:'https://calendar.google.com/calendar/ical/u21tgtud6mn6sephsftl89883c%40group.calendar.google.com/public/basic.ics',sport:'nastic'},
+  {url:'https://ics.sync2cal.com/categories/get_ics/17bf3b87-5f4e-42a3-b765-b617de9e416a.ics',sport:'cycling'},
 ];
 
-// CORS proxy to fetch iCal feeds from browser
-const PROXY='https://api.allorigins.win/raw?url=';
-
-let allEvents=[];
+let allEvents=[],nasticEvents=JSON.parse(localStorage.getItem('nasticEvents')||'[]');
 let activeFilters=new Set(Object.keys(SPORTS));
-let currentDate=new Date();
-currentDate.setDate(1);
+let currentDate=new Date();currentDate.setDate(1);
 
-function parseICS(text, sport){
-  const events=[];
-  const blocks=text.split('BEGIN:VEVENT');
-  blocks.shift();
-  blocks.forEach(block=>{
-    const get=key=>{
-      const m=block.match(new RegExp(key+'(?:;[^:]*)?:([^\\r\\n]+)'));
-      return m?m[1].trim():'';
-    };
-    const dtstart=get('DTSTART');
-    const summary=get('SUMMARY');
-    const location=get('LOCATION');
-    const uid=get('UID');
-    if(!dtstart||!summary)return;
-
-    // Parse date
+function parseICS(txt,sport,filter){
+  const out=[];
+  txt.split('BEGIN:VEVENT').slice(1).forEach(b=>{
+    const g=k=>{const m=b.match(new RegExp(k+'(?:;[^:]*)?:([^\\r\\n]+)'));return m?m[1].trim():''};
+    const ds=g('DTSTART'),sum=g('SUMMARY'),loc=g('LOCATION'),uid=g('UID');
+    if(!ds||!sum)return;
+    let title=sum.replace(/\\n/g,' ').replace(/\[W\]\s*/,'').replace(/\[L\]\s*/,'').trim();
+    if(filter&&!title.includes(filter))return;
     let date,time='TBD';
-    if(dtstart.includes('T')){
-      const clean=dtstart.replace(/[TZ]/g,' ').trim();
-      const yr=dtstart.substring(0,4);
-      const mo=dtstart.substring(4,6);
-      const dy=dtstart.substring(6,8);
-      const hr=dtstart.substring(9,11);
-      const mn=dtstart.substring(11,13);
-      const d=new Date(`${yr}-${mo}-${dy}T${hr}:${mn}:00Z`);
-      date=d.toLocaleDateString('en-CA',{timeZone:'America/Chicago'});
-      time=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/Chicago'});
+    if(ds.includes('T')){
+      const yr=ds.slice(0,4),mo=ds.slice(4,6),dy=ds.slice(6,8),hr=ds.slice(9,11),mn=ds.slice(11,13);
+      const isUTC=ds.endsWith('Z');
+      if(isUTC){
+        const d=new Date(`${yr}-${mo}-${dy}T${hr}:${mn}:00Z`);
+        date=d.toLocaleDateString('en-CA',{timeZone:'America/Chicago'});
+        time=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/Chicago'});
+      } else {
+        date=`${yr}-${mo}-${dy}`;
+        const h=parseInt(hr),ap=h>=12?'PM':'AM',h12=h%12||12;
+        time=`${h12}:${mn} AM`.replace('AM',ap);
+      }
     } else {
-      const yr=dtstart.substring(0,4);
-      const mo=dtstart.substring(4,6);
-      const dy=dtstart.substring(6,8);
-      date=`${yr}-${mo}-${dy}`;
+      date=`${ds.slice(0,4)}-${ds.slice(4,6)}-${ds.slice(6,8)}`;
       time='All day';
     }
-
-    // Clean up summary
-    let title=summary.replace(/\\n/g,' ').replace(/\[W\] /,'').replace(/\[L\] /,'').trim();
-
-    // For MLB feed, only keep Cardinals games
-    if(sport==='mlb' && !title.includes('Cardinals')) return;
-
-    events.push({id:uid||`${sport}-${date}-${Math.random()}`,sport,title,date,time,venue:location.replace(/\\,/g,',').replace(/\\/g,'').trim()||'TBD'});
+    out.push({id:uid||`${sport}-${date}-${Math.random()}`,sport,title,date,time,venue:loc.replace(/\\,/g,',').replace(/\\/g,'').trim()||''});
   });
-  return events;
+  return out;
 }
 
-async function fetchFeed(feed){
+async function fetchFeed(f){
   try{
-    const res=await fetch(PROXY+encodeURIComponent(feed.url));
-    if(!res.ok)return[];
-    const text=await res.text();
-    return parseICS(text,feed.sport);
-  }catch(e){
-    console.warn('Feed failed:',feed.sport,e);
-    return[];
-  }
+    const r=await fetch(PROXY+encodeURIComponent(f.url));
+    if(!r.ok)return[];
+    return parseICS(await r.text(),f.sport,f.filter||null);
+  }catch(e){console.warn('Feed fail',f.sport,e);return[];}
 }
 
 async function loadAll(){
   document.getElementById('event-list').innerHTML='<div class="loading">fetching schedules...</div>';
-  const results=await Promise.all(FEEDS.map(fetchFeed));
-  allEvents=results.flat();
-  // Deduplicate by id
+  const res=await Promise.all(FEEDS.map(fetchFeed));
+  const raw=res.flat();
   const seen=new Set();
-  allEvents=allEvents.filter(e=>{
-    if(seen.has(e.id))return false;
-    seen.add(e.id);
-    return true;
+  allEvents=raw.filter(e=>{
+    const k=`${e.sport}|${e.date}|${e.title}`;
+    if(seen.has(k))return false;
+    seen.add(k);return true;
   });
   render();
 }
 
 function getVisible(){return allEvents.filter(e=>activeFilters.has(e.sport));}
-function getEventsForDate(ds){return getVisible().filter(e=>e.date===ds);}
-
-function renderFilters(){
+function getEventsForDate(ds){return getVisible().filter(e=>e.date===ds);}function renderFilters(){
   const el=document.getElementById('filters');
   el.innerHTML='';
   const all=document.createElement('div');
@@ -213,28 +185,24 @@ function renderFilters(){
 
 function renderCalendar(){
   const el=document.getElementById('calendar');
-  const year=currentDate.getFullYear();
-  const month=currentDate.getMonth();
+  const year=currentDate.getFullYear(),month=currentDate.getMonth();
   const today=new Date();
-  const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const todayStr=today.toLocaleDateString('en-CA',{timeZone:'America/Chicago'});
   document.getElementById('nav-month').textContent=currentDate.toLocaleString('en-US',{month:'long',year:'numeric'});
   el.innerHTML=['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d=>`<div class="dh">${d}</div>`).join('');
   const firstDay=new Date(year,month,1).getDay();
   const daysInMonth=new Date(year,month+1,0).getDate();
   const prevDays=new Date(year,month,0).getDate();
-  for(let i=0;i<firstDay;i++){
-    el.innerHTML+=`<div class="dc om"><div class="dn">${prevDays-firstDay+1+i}</div></div>`;
-  }
+  for(let i=0;i<firstDay;i++)el.innerHTML+=`<div class="dc om"><div class="dn">${prevDays-firstDay+1+i}</div></div>`;
   for(let d=1;d<=daysInMonth;d++){
     const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday=ds===todayStr;
     const evs=getEventsForDate(ds);
-    const max=2;
-    let evHtml=evs.slice(0,max).map(e=>{
+    let evHtml=evs.slice(0,2).map(e=>{
       const s=SPORTS[e.sport];
-      return`<div class="ev" style="background:${s.bg};color:${s.text}" onclick="showModal('${CSS.escape(e.id)}')">${e.title}</div>`;
+      return`<div class="ev" style="background:${s.bg};color:${s.text}" onclick="showModal('${e.id.replace(/'/g,"\\'")}')">${e.title}</div>`;
     }).join('');
-    if(evs.length>max)evHtml+=`<div class="more">+${evs.length-max} more</div>`;
+    if(evs.length>2)evHtml+=`<div class="more">+${evs.length-2} more</div>`;
     el.innerHTML+=`<div class="dc${isToday?' today':''}"><div class="dn">${d}</div>${evHtml}</div>`;
   }
   const remaining=42-firstDay-daysInMonth;
@@ -243,38 +211,34 @@ function renderCalendar(){
 
 function renderUpcoming(){
   const el=document.getElementById('event-list');
-  const todayStr=new Date().toISOString().split('T')[0];
+  const todayStr=new Date().toLocaleDateString('en-CA',{timeZone:'America/Chicago'});
   const upcoming=getVisible()
     .filter(e=>e.date>=todayStr)
     .sort((a,b)=>a.date.localeCompare(b.date))
-    .slice(0,20);
-  if(!upcoming.length){
-    el.innerHTML='<div class="loading">no upcoming events for selected sports</div>';
-    return;
-  }
+    .slice(0,15);
+  if(!upcoming.length){el.innerHTML='<div class="loading">no upcoming events</div>';return;}
   el.innerHTML=upcoming.map(e=>{
     const s=SPORTS[e.sport];
     const d=new Date(e.date+'T12:00:00');
     const mo=d.toLocaleString('en-US',{month:'short'}).toUpperCase();
     const dy=d.getDate();
-    const safeId=e.id.replace(/'/g,"\\'");
-    return`<div class="ec" onclick="showModal('${safeId}')">
+    const sid=e.id.replace(/'/g,"\\'");
+    return`<div class="ec" onclick="showModal('${sid}')">
       <div class="ec-stripe" style="background:${s.color}"></div>
       <div class="ec-date"><div class="mo">${mo}</div><div class="dy">${dy}</div></div>
-      <div class="ec-body"><div class="ec-title">${e.title}</div><div class="ec-meta">${e.time}${e.venue&&e.venue!=='TBD'?' · '+e.venue:''}</div></div>
+      <div class="ec-body"><div class="ec-title">${e.title}</div><div class="ec-meta">${e.time}${e.venue?' · '+e.venue:''}</div></div>
       <div class="ec-tag"><span class="tag" style="background:${s.bg};color:${s.text}">${s.label}</span></div>
     </div>`;
   }).join('');
 }
 
 function showModal(id){
-  const e=allEvents.find(ev=>ev.id===id);
-  if(!e)return;
+  const e=allEvents.find(ev=>ev.id===id);if(!e)return;
   const s=SPORTS[e.sport];
   const d=new Date(e.date+'T12:00:00');
   document.getElementById('m-title').textContent=e.title;
   document.getElementById('m-date').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})+' · '+e.time;
-  document.getElementById('m-venue').textContent=e.venue!=='TBD'?e.venue:'';
+  document.getElementById('m-venue').textContent=e.venue||'';
   const badge=document.getElementById('m-badge');
   badge.textContent=s.label;badge.style.background=s.bg;badge.style.color=s.text;
   document.getElementById('modal').classList.add('open');
