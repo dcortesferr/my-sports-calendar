@@ -93,7 +93,6 @@ const SPORTS={
   ncaaf:  {label:'UK Football',color:'#0033A0',bg:'#0a1a3a',text:'#6699DD'},
   soccer: {label:'Barca',     color:'#A50044',bg:'#2a0a1a',text:'#DD6699'},
   mls:    {label:'STL City',  color:'#003DA5',bg:'#0a1a2a',text:'#6699DD'},
-  nastic: {label:'Nastic',    color:'#E24B4A',bg:'#2a0d0d',text:'#F09595'},
   cycling:{label:'Cycling',   color:'#BA7517',bg:'#2a1e05',text:'#F5C97A'},
 };
 
@@ -106,11 +105,9 @@ const FEEDS=[
   {url:'https://slubillikens.com/calendar.ashx/calendar.ics?sport_id=5&_=cmjuq62kw00013t9dcwnqdim3',sport:'ncaab'},
   {url:'https://ics.ecal.com/ecal-sub/6a0e8da349cf450002debd05/FC%20Barcelona.ics',sport:'soccer'},
   {url:'https://calendar.google.com/calendar/ical/d9c0eaefc381af39120859813a5bbf438cd051dc133acd96b654c7fe5edfc9ed%40group.calendar.google.com/public/basic.ics',sport:'mls'},
-  {url:'https://calendar.google.com/calendar/ical/u21tgtud6mn6sephsftl89883c%40group.calendar.google.com/public/basic.ics',sport:'nastic'},
-  {url:'https://ics.sync2cal.com/categories/get_ics/17bf3b87-5f4e-42a3-b765-b617de9e416a.ics',sport:'cycling'},
 ];
 
-let allEvents=[],nasticEvents=JSON.parse(localStorage.getItem('nasticEvents')||'[]');
+let allEvents=[];
 let activeFilters=new Set(Object.keys(SPORTS));
 let currentDate=new Date();currentDate.setDate(1);
 
@@ -133,7 +130,7 @@ function parseICS(txt,sport,filter){
       } else {
         date=`${yr}-${mo}-${dy}`;
         const h=parseInt(hr),ap=h>=12?'PM':'AM',h12=h%12||12;
-        time=`${h12}:${mn} AM`.replace('AM',ap);
+        time=`${h12}:${mn} ${ap}`;
       }
     } else {
       date=`${ds.slice(0,4)}-${ds.slice(4,6)}-${ds.slice(6,8)}`;
@@ -152,10 +149,36 @@ async function fetchFeed(f){
   }catch(e){console.warn('Feed fail',f.sport,e);return[];}
 }
 
+function getCycling(){
+  const yr=new Date().getFullYear();
+  const evs=[];
+  const ranges=[
+    {id:'giro',title:"Giro d'Italia",start:`${yr}-05-09`,end:`${yr}-06-01`,venue:'Italy'},
+    {id:'tdf',title:'Tour de France',start:`${yr}-06-28`,end:`${yr}-07-27`,venue:'France'},
+    {id:'vuelta',title:'La Vuelta',start:`${yr}-08-15`,end:`${yr}-09-06`,venue:'Spain'},
+  ];
+  ranges.forEach(r=>{
+    let d=new Date(r.start+'T12:00:00');
+    const end=new Date(r.end+'T12:00:00');
+    while(d<=end){
+      const ds=d.toISOString().split('T')[0];
+      evs.push({id:`${r.id}-${ds}`,sport:'cycling',title:r.title,date:ds,time:'All day',venue:r.venue});
+      d.setDate(d.getDate()+1);
+    }
+  });
+  [{id:'sanremo',title:'Milan-San Remo',date:`${yr}-03-22`,venue:'Italy'},
+   {id:'flanders',title:'Tour of Flanders',date:`${yr}-04-06`,venue:'Belgium'},
+   {id:'roubaix',title:'Paris-Roubaix',date:`${yr}-04-13`,venue:'France'},
+   {id:'liege',title:'Liege-Bastogne-Liege',date:`${yr}-04-27`,venue:'Belgium'},
+   {id:'lombardia',title:'Il Lombardia',date:`${yr}-10-11`,venue:'Italy'},
+  ].forEach(m=>evs.push({...m,sport:'cycling',time:'All day'}));
+  return evs;
+}
+
 async function loadAll(){
   document.getElementById('event-list').innerHTML='<div class="loading">fetching schedules...</div>';
   const res=await Promise.all(FEEDS.map(fetchFeed));
-  const raw=res.flat();
+  const raw=[...res.flat(),...getCycling()];
   const seen=new Set();
   allEvents=raw.filter(e=>{
     const k=`${e.sport}|${e.date}|${e.title}`;
