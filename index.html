@@ -94,6 +94,7 @@ const SPORTS={
   soccer: {label:'Barca',     color:'#A50044',bg:'#2a0a1a',text:'#DD6699'},
   mls:    {label:'STL City',  color:'#003DA5',bg:'#0a1a2a',text:'#6699DD'},
   cycling:{label:'Cycling',   color:'#BA7517',bg:'#2a1e05',text:'#F5C97A'},
+  worldcup:{label:'World Cup',color:'#006633',bg:'#0a2218',text:'#55BB88'},
 };
 
 const PROXY='https://api.allorigins.win/raw?url=';
@@ -154,8 +155,8 @@ function getCycling(){
   const evs=[];
   const ranges=[
     {id:'giro',title:"Giro d'Italia",start:`${yr}-05-09`,end:`${yr}-06-01`,venue:'Italy'},
-    {id:'tdf',title:'Tour de France',start:`${yr}-06-28`,end:`${yr}-07-27`,venue:'France'},
-    {id:'vuelta',title:'La Vuelta',start:`${yr}-08-15`,end:`${yr}-09-06`,venue:'Spain'},
+    {id:'tdf',title:'Tour de France',start:`${yr}-07-04`,end:`${yr}-07-26`,venue:'France'},
+    {id:'vuelta',title:'La Vuelta',start:`${yr}-08-22`,end:`${yr}-09-13`,venue:'Spain'},
   ];
   ranges.forEach(r=>{
     let d=new Date(r.start+'T12:00:00');
@@ -166,11 +167,19 @@ function getCycling(){
       d.setDate(d.getDate()+1);
     }
   });
+  const wcStart=new Date(`${yr}-06-11T12:00:00`);
+  const wcEnd=new Date(`${yr}-07-19T12:00:00`);
+  let wcDay=new Date(wcStart);
+  while(wcDay<=wcEnd){
+    const ds=wcDay.toISOString().split('T')[0];
+    evs.push({id:`worldcup-${ds}`,sport:'worldcup',title:'FIFA World Cup 2026',date:ds,time:'All day',venue:'USA / Canada / Mexico'});
+    wcDay.setDate(wcDay.getDate()+1);
+  }
   [{id:'sanremo',title:'Milan-San Remo',date:`${yr}-03-22`,venue:'Italy'},
    {id:'flanders',title:'Tour of Flanders',date:`${yr}-04-06`,venue:'Belgium'},
    {id:'roubaix',title:'Paris-Roubaix',date:`${yr}-04-13`,venue:'France'},
    {id:'liege',title:'Liege-Bastogne-Liege',date:`${yr}-04-27`,venue:'Belgium'},
-   {id:'lombardia',title:'Il Lombardia',date:`${yr}-10-11`,venue:'Italy'},
+   {id:'lombardia',title:'Il Lombardia',date:`${yr}-10-10`,venue:'Italy'},
   ].forEach(m=>evs.push({...m,sport:'cycling',time:'All day'}));
   return evs;
 }
